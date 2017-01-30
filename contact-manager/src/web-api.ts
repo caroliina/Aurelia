@@ -1,5 +1,9 @@
+import {HttpClient} from 'aurelia-http-client';
+
 let latency = 200;
 let id = 0;
+
+let client = new HttpClient();
 
 function getId(){
   return ++id;
@@ -48,15 +52,12 @@ export class WebAPI {
   
   getContactList(){
     this.isRequesting = true;
-    return new Promise(resolve => {
+		return new Promise(resolve => {
       setTimeout(() => {
-        let results = contacts.map(x =>  { return {
-          id:x.id,
-          firstName:x.firstName,
-          lastName:x.lastName,
-          email:x.email
-        }});
-        resolve(results);
+        let found = client.get('https://api.myjson.com/bins/1a0u05')
+				.then(data => {       
+					resolve(JSON.parse(data.response));
+     		});
         this.isRequesting = false;
       }, latency);
     });

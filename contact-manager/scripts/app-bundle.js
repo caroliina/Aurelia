@@ -1,7 +1,8 @@
-define('web-api',["require", "exports"], function (require, exports) {
+define('web-api',["require", "exports", "aurelia-http-client"], function (require, exports, aurelia_http_client_1) {
     "use strict";
     var latency = 200;
     var id = 0;
+    var client = new aurelia_http_client_1.HttpClient();
     function getId() {
         return ++id;
     }
@@ -51,15 +52,10 @@ define('web-api',["require", "exports"], function (require, exports) {
             this.isRequesting = true;
             return new Promise(function (resolve) {
                 setTimeout(function () {
-                    var results = contacts.map(function (x) {
-                        return {
-                            id: x.id,
-                            firstName: x.firstName,
-                            lastName: x.lastName,
-                            email: x.email
-                        };
+                    var found = client.get('https://api.myjson.com/bins/1a0u05')
+                        .then(function (data) {
+                        resolve(JSON.parse(data.response));
                     });
-                    resolve(results);
                     _this.isRequesting = false;
                 }, latency);
             });
